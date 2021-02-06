@@ -2,13 +2,18 @@ import React, { useState, useEffect } from "react"
 import Blog from "./components/Blog"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
+import "./App.css"
 
 const App = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [user, setUser] = useState(null)
   const [blogs, setBlogs] = useState([])
+  const [title, setTitle] = useState("")
+  const [author, setAuthor] = useState("")
+  const [url, setUrl] = useState("")
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -49,9 +54,31 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogAppUser")
   }
 
+  const handleNewBlogSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      const createdBlog = await blogService.create({ title, author, url })
+      setBlogs(blogs.concat(createdBlog))
+      setTitle(null)
+      setAuthor(null)
+      setUrl(null)
+      setMessage(`a new blog ${title} by ${author} added`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setErrorMessage(exception.response.data.error)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
   const loginForm = () => (
     <div>
       <h2>log in to application</h2>
+      <Notification className="error" message={errorMessage} />
+      <Notification className="success" message={message} />
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -79,10 +106,12 @@ const App = () => {
   const blogList = () => (
     <div>
       <h2>blogs</h2>
+      <Notification className="error" message={errorMessage} />
+      <Notification className="success" message={message} />
       <p>
         {user.name} logged in <button onClick={handleLogout}>log out</button>
       </p>
-      <NewBlogForm setBlogs={setBlogs} blogs={blogs} />
+      {newBlogForm()}
       <div>
         {blogs.map((blog) => (
           <Blog key={blog.id} blog={blog} />
@@ -90,6 +119,44 @@ const App = () => {
       </div>
     </div>
   )
+
+  const newBlogForm = () => {
+    return (
+      <div>
+        <h2>create new</h2>
+        <form onSubmit={handleNewBlogSubmit}>
+          <div>
+            title
+            <input
+              type="text"
+              value={title}
+              name="Title"
+              onChange={({ target }) => setTitle(target.value)}
+            />
+          </div>
+          <div>
+            author
+            <input
+              type="text"
+              value={author}
+              name="Author"
+              onChange={({ target }) => setAuthor(target.value)}
+            />
+          </div>
+          <div>
+            url
+            <input
+              type="text"
+              value={url}
+              name="URL"
+              onChange={({ target }) => setUrl(target.value)}
+            />
+          </div>
+          <button type="submit">create</button>
+        </form>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -99,52 +166,12 @@ const App = () => {
   )
 }
 
-const NewBlogForm = ({ blogs, setBlogs }) => {
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
-  const handleNewBlogSubmit = async (event) => {
-    event.preventDefault()
-    const newBlog = { title, author, url }
-    const createdBlog = await blogService.create(newBlog)
-    setBlogs(blogs.concat(createdBlog))
-    console.log("NewBlogForm", newBlog)
+const Notification = ({ message, ...props }) => {
+  if (message === null) {
+    return null
   }
-  return (
-    <div>
-      <h2>create new</h2>
-      <form onSubmit={handleNewBlogSubmit}>
-        <div>
-          title
-          <input
-            type="text"
-            value={title}
-            name="Title"
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          author
-          <input
-            type="text"
-            value={author}
-            name="Author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url
-          <input
-            type="text"
-            value={url}
-            name="URL"
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
-  )
+
+  return <div {...props}>{message}</div>
 }
 
 export default App
