@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import PropTypes from "prop-types"
 
 const Blog = ({ blog, removeBlog, likeBlog }) => {
   const { title, author, url, likes } = blog
@@ -39,6 +40,18 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
       {showDetails && blogDetails()}
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
+  }),
+  removeBlog: PropTypes.func.isRequired,
+  likeBlog: PropTypes.func.isRequired,
 }
 
 export default Blog

@@ -5,6 +5,7 @@ import loginService from "./services/login"
 import "./App.css"
 import Togglable from "./components/Togglable"
 import NewBlogForm from "./components/NewBlogForm"
+import PropTypes from "prop-types"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -160,6 +161,10 @@ const Notification = ({ message, ...props }) => {
   }
 
   return <div {...props}>{message}</div>
+}
+
+Notification.propTypes = {
+  message: PropTypes.string,
 }
 
 export default App
