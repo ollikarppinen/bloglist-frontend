@@ -1,8 +1,6 @@
 import React, { useState } from "react"
 
-import blogsService from "./../services/blogs"
-
-const Blog = ({ blog, setBlogs, blogs }) => {
+const Blog = ({ blog, removeBlog, likeBlog }) => {
   const { title, author, url, likes } = blog
   const [showDetails, setShowDetails] = useState(false)
 
@@ -19,22 +17,17 @@ const Blog = ({ blog, setBlogs, blogs }) => {
       <div>{url}</div>
       <div>
         {likes}
-        <button onClick={onLike}>like</button>
+        <button onClick={() => likeBlog(blog)}>like</button>
       </div>
       <div>{author}</div>
+      <button onClick={onBlogRemove}>remove</button>
     </div>
   )
 
-  const onLike = async () => {
-    const updatedBlog = await blogsService.put({
-      ...blog,
-      likes: blog.likes + 1,
-    })
-    setBlogs(
-      blogs
-        .map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
-        .sort((a, b) => b.likes - a.likes)
-    )
+  const onBlogRemove = () => {
+    if (window.confirm(`Remove blog ${title} by ${author}`)) {
+      removeBlog(blog)
+    }
   }
 
   return (
