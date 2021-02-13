@@ -31,7 +31,9 @@ const Blog = ({ blog, setBlogs, blogs }) => {
       likes: blog.likes + 1,
     })
     setBlogs(
-      blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+      blogs
+        .map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+        .sort((a, b) => b.likes - a.likes)
     )
   }
 
