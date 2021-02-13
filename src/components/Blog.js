@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 
-const Blog = ({ blog }) => {
+import blogsService from "./../services/blogs"
+
+const Blog = ({ blog, setBlogs, blogs }) => {
   const { title, author, url, likes } = blog
   const [showDetails, setShowDetails] = useState(false)
 
@@ -17,11 +19,21 @@ const Blog = ({ blog }) => {
       <div>{url}</div>
       <div>
         {likes}
-        <button>like</button>
+        <button onClick={onLike}>like</button>
       </div>
       <div>{author}</div>
     </div>
   )
+
+  const onLike = async () => {
+    const updatedBlog = await blogsService.put({
+      ...blog,
+      likes: blog.likes + 1,
+    })
+    setBlogs(
+      blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+    )
+  }
 
   return (
     <div style={blogStyle}>
