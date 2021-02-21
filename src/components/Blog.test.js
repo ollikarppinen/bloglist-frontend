@@ -1,6 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import { render } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import Blog from "./Blog";
 
 describe("render", () => {
@@ -8,7 +8,7 @@ describe("render", () => {
     title: "title",
     author: "author",
     url: "url",
-    likes: 1,
+    likes: 123,
     id: "id",
   };
   const removeBlog = () => {};
@@ -26,7 +26,6 @@ describe("render", () => {
   });
 
   test("renders author", () => {
-    const div = component.container.querySelector("div");
     expect(component.container).toHaveTextContent("author");
   });
 
@@ -36,5 +35,13 @@ describe("render", () => {
 
   test("does not render likes", () => {
     expect(component.container).not.toHaveTextContent(1);
+  });
+
+  test("after clicking the button, url and likes are displayed", () => {
+    const button = component.container.querySelector(".showDetailsButton");
+    fireEvent.click(button);
+
+    expect(component.container).toHaveTextContent("url");
+    expect(component.container).toHaveTextContent(123);
   });
 });

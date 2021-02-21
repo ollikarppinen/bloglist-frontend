@@ -35,7 +35,10 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
   return (
     <div style={blogStyle} className="blog">
       {title} {author}
-      <button onClick={() => setShowDetails(!showDetails)}>
+      <button
+        className="showDetailsButton"
+        onClick={() => setShowDetails(!showDetails)}
+      >
         {showDetails ? "hide" : "view"}
       </button>
       {showDetails && blogDetails()}
