@@ -1,17 +1,18 @@
-import React, { useState } from "react"
-import PropTypes from "prop-types"
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 const Blog = ({ blog, removeBlog, likeBlog }) => {
-  const { title, author, url, likes } = blog
-  const [showDetails, setShowDetails] = useState(false)
+  const { title, author, url, likes } = blog;
+  const [showDetails, setShowDetails] = useState(false);
 
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
     border: "solid",
     borderWidth: 1,
+
     marginBottom: 5,
-  }
+  };
 
   const blogDetails = () => (
     <div>
@@ -23,24 +24,24 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
       <div>{author}</div>
       <button onClick={onBlogRemove}>remove</button>
     </div>
-  )
+  );
 
   const onBlogRemove = () => {
     if (window.confirm(`Remove blog ${title} by ${author}`)) {
-      removeBlog(blog)
+      removeBlog(blog);
     }
-  }
+  };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       {title} {author}
       <button onClick={() => setShowDetails(!showDetails)}>
         {showDetails ? "hide" : "view"}
       </button>
       {showDetails && blogDetails()}
     </div>
-  )
-}
+  );
+};
 
 Blog.propTypes = {
   blog: PropTypes.shape({
@@ -52,6 +53,6 @@ Blog.propTypes = {
   }),
   removeBlog: PropTypes.func.isRequired,
   likeBlog: PropTypes.func.isRequired,
-}
+};
 
-export default Blog
+export default Blog;
