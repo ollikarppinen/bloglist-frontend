@@ -11,13 +11,15 @@ describe("render", () => {
     likes: 123,
     id: "id",
   };
-  const removeBlog = () => {};
-  const likeBlog = () => {};
-  const params = { blog, removeBlog, likeBlog };
+  let removeBlog;
+  let likeBlog;
 
   let component;
 
   beforeEach(() => {
+    removeBlog = jest.fn();
+    likeBlog = jest.fn();
+    const params = { blog, removeBlog, likeBlog };
     component = render(<Blog {...params} />);
   });
 
@@ -43,5 +45,17 @@ describe("render", () => {
 
     expect(component.container).toHaveTextContent("url");
     expect(component.container).toHaveTextContent(123);
+  });
+
+  test("calls likeBlog param function on blog like", () => {
+    expect(likeBlog.mock.calls).toHaveLength(0);
+    const showDetailsButton = component.container.querySelector(
+      ".showDetailsButton"
+    );
+    fireEvent.click(showDetailsButton);
+    const likeButton = component.container.querySelector(".likeButton");
+    fireEvent.click(likeButton);
+    fireEvent.click(likeButton);
+    expect(likeBlog.mock.calls).toHaveLength(2);
   });
 });
