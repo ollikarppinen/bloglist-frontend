@@ -92,6 +92,12 @@ describe("Blog app", function() {
         cy.get("#like-blog-button").click();
         cy.contains(124);
       });
+
+      it("user can delete the blog", function() {
+        cy.contains("view").click();
+        cy.get("#remove-blog-button").click();
+        cy.contains("fuu title").should("not.exist");
+      });
     });
   });
 });
