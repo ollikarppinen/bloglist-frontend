@@ -1,3 +1,5 @@
+const { _ } = Cypress;
+
 describe("Blog app", function() {
   const user = {
     name: "Matti Luukkainen",
@@ -72,7 +74,7 @@ describe("Blog app", function() {
       });
     });
 
-    describe.only("with blog", function() {
+    describe.only("with a blog", function() {
       beforeEach(function() {
         cy.createBlog({
           title: "fuu title",
@@ -97,6 +99,45 @@ describe("Blog app", function() {
         cy.contains("view").click();
         cy.get("#remove-blog-button").click();
         cy.contains("fuu title").should("not.exist");
+      });
+    });
+
+    describe.only("with multiple blogs", function() {
+      const blogs = [
+        {
+          title: "title 1",
+          author: "author 1",
+          url: "url 1",
+          likes: 1,
+        },
+        {
+          title: "title 5",
+          author: "author 5",
+          url: "url 5",
+          likes: 5,
+        },
+        {
+          title: "title 3",
+          author: "author 3",
+          url: "url 3",
+          likes: 3,
+        },
+      ];
+      beforeEach(function() {
+        blogs.forEach(cy.createBlog);
+      });
+
+      it("blogs are shown in like order", function() {
+        const toStrings = (cells$) => _.map(cells$, "textContent");
+        cy.get(".blog")
+          .then(toStrings)
+          .then((blogTitles) => {
+            expect(blogTitles).to.eql(
+              blogs
+                .sort((a, b) => b.likes - a.likes)
+                .map(({ title, author }) => `${title} ${author}view`)
+            );
+          });
       });
     });
   });
