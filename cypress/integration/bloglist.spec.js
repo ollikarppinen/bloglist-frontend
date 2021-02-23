@@ -43,7 +43,7 @@ describe("Blog app", function() {
     });
   });
 
-  describe.only("When logged in", function() {
+  describe.only("when logged in", function() {
     beforeEach(function() {
       cy.request("POST", "http://localhost:3003/api/login", {
         username: "mluukkai",
@@ -57,17 +57,41 @@ describe("Blog app", function() {
       });
     });
 
-    it("users name is displayed", () => {
-      cy.contains(`${user.name}`);
+    describe.only("without blogs", function() {
+      it("users name is displayed", () => {
+        cy.contains(`${user.name}`);
+      });
+
+      it("A blog can be created", function() {
+        cy.contains("new note").click();
+        cy.get("#title").type("fuu title");
+        cy.get("#author").type("bar author");
+        cy.get("#url").type("baz url");
+        cy.get("#submit-new-blog").click();
+        cy.contains("fuu title");
+      });
     });
 
-    it("A blog can be created", function() {
-      cy.contains("new note").click();
-      cy.get("#title").type("title fii fuu");
-      cy.get("#author").type("author");
-      cy.get("#url").type("url");
-      cy.get("#submit-new-blog").click();
-      cy.contains("title fii fuu");
+    describe.only("with blog", function() {
+      beforeEach(function() {
+        cy.createBlog({
+          title: "fuu title",
+          author: "bar author",
+          url: "baz url",
+          likes: 123,
+        });
+      });
+
+      it("blog is shown", function() {
+        cy.contains("fuu title");
+      });
+
+      it("liking increases blog likes", function() {
+        cy.contains("view").click();
+        cy.contains(123);
+        cy.get("#like-blog-button").click();
+        cy.contains(124);
+      });
     });
   });
 });
